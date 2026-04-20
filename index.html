@@ -1,146 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Boxing Fight Prep Tracker</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-      max-width: 800px;
-      margin: auto;
-      padding: 20px;
-    }
-    h2 {
-      color: #c62828;
-    }
-    h3 {
-      margin-top: 30px;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 5px;
-    }
-    input[type="checkbox"] {
-      transform: scale(1.3);
-      margin-right: 10px;
-    }
-    .desc {
-      margin-left: 28px;
-      font-style: italic;
-      color: #444;
-    }
-    button {
-      margin-top: 20px;
-      padding: 8px 16px;
-      font-size: 14px;
-      background: #c62828;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Care Power BI Data Model Guide</title>
+<style>
+  :root { --primary: #2563eb; --accent: #059669; --bg: #f8fafc; --card: #fff; --border: #e2e8f0; --text: #1e293b; --muted: #64748b; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 2rem; max-width: 1200px; margin: 0 auto; }
+  h1 { font-size: 1.8rem; color: var(--primary); margin-bottom: 0.5rem; }
+  h1 small { font-size: 0.9rem; color: var(--muted); font-weight: 400; display: block; margin-top: 0.25rem; }
+  h2 { font-size: 1.35rem; color: var(--primary); margin: 2rem 0 1rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--primary); }
+  h3 { font-size: 1.1rem; margin: 1.5rem 0 0.75rem; color: var(--text); }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.9rem; }
+  th { background: #eef2ff; color: var(--primary); text-align: left; padding: 0.6rem 0.75rem; border-bottom: 2px solid var(--primary); font-weight: 600; }
+  td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:hover td { background: #f1f5f9; }
+  code { background: #eef2ff; color: var(--primary); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; font-family: 'Cascadia Code', 'Consolas', monospace; }
+  .er-diagram { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; padding: 1.5rem; }
+  .er-box { background: #eef2ff; border: 2px solid var(--primary); border-radius: 8px; padding: 0.75rem 1rem; min-width: 180px; text-align: center; }
+  .er-box.fact { background: #dbeafe; border-color: var(--primary); }
+  .er-box.dim { background: #ecfdf5; border-color: var(--accent); }
+  .er-box strong { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+  .er-box span { font-weight: 600; font-size: 0.95rem; }
+  .er-arrow { display: flex; align-items: center; color: var(--muted); font-size: 1.5rem; }
+  .page-section { border-left: 4px solid var(--accent); padding-left: 1rem; margin: 1.25rem 0; }
+  .page-section h3 { margin-top: 0; color: var(--accent); }
+  .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 12px; font-size: 0.78rem; font-weight: 600; }
+  .badge-blue { background: #dbeafe; color: #1d4ed8; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-amber { background: #fef3c7; color: #92400e; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } body { padding: 1rem; } }
+  .tip { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 6px; padding: 0.75rem 1rem; margin: 1rem 0; font-size: 0.9rem; }
+  .tip::before { content: "💡 "; }
+</style>
 </head>
 <body>
 
-  <h2>🥊 Boxing Fight Prep Tracker: August 15 Target</h2>
+<h1>Care Weekly Schedule — Power BI Data Model Guide
+  <small>Based on <code>vw_CareWeeklyScheduleV2Test</code> and the current database schema</small>
+</h1>
 
-  <button onclick="resetProgress()">🔁 Reset for Next Day</button>
-
-  <h3>✅ DAILY CHECKLIST (10–15 min)</h3>
-  <p><em>Do every morning or before boxing/footwork work</em></p>
-  <div id="daily-checklist">
-    <label><input type="checkbox" id="wall-breath"> Wall 90/90 breathing – 5 deep breaths</label>
-    <div class="desc">Lie on your back with feet on the wall, knees and hips at 90°...</div>
-
-    <label><input type="checkbox" id="dead-bug"> Foot-elevated dead bug – 2x6 per side</label>
-    <div class="desc">Lie on back with feet on a low surface. Keep ribs down and alternate lowering...</div>
-
-    <label><input type="checkbox" id="toe-pulls"> Toe pull-ins with band – 2x10 each foot</label>
-    <div class="desc">Use a loop band around the big toe. Pull toward the heel without curling.</div>
-
-    <label><input type="checkbox" id="split-squat"> Wall split squat with reach – 2x5 each leg</label>
-    <div class="desc">Front foot flat, back foot against the wall. Reach both arms forward as you descend.</div>
-
-    <label><input type="checkbox" id="march"> March in place (posture-focused) – 30–60 sec</label>
-    <div class="desc">Stay tall, ribs over pelvis. Quiet landings, opposite arm/leg sync.</div>
+<!-- ───── DATA MODEL ───── -->
+<h2>Recommended Data Model (Star Schema)</h2>
+<div class="card">
+  <div class="er-diagram">
+    <div class="er-box dim"><strong>Dimension</strong><span>Site</span></div>
+    <div class="er-arrow">→</div>
+    <div class="er-box fact"><strong>Fact</strong><span>Care Schedule</span></div>
+    <div class="er-arrow">←</div>
+    <div class="er-box dim"><strong>Dimension</strong><span>Resident</span></div>
+    <div class="er-arrow">→</div>
+    <div class="er-box dim"><strong>Dimension</strong><span>Room</span></div>
+    <div class="er-arrow">→</div>
+    <div class="er-box dim"><strong>Dimension</strong><span>Zone</span></div>
   </div>
 
-  <h3>📆 ALTERNATE DAY: GAIT + FOOTWORK DRILLS</h3>
-  <div id="footwork-checklist">
-    <label><input type="checkbox" id="toe-walks"> Toe-off walking drills – 2x20m</label>
-    <div class="desc">Push off the big toe fully before stepping forward.</div>
+  <table>
+    <thead><tr><th>Power BI Table</th><th>Source</th><th>Key Columns for Slicing</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Fact: Care Schedule</strong></td><td><code>vw_CareWeeklyScheduleV2Test</code></td><td>ScheduleDate, CareType, Frequency_id</td></tr>
+      <tr><td><strong>Dim: Site</strong></td><td><code>dbo.Site</code></td><td>Name_or_Title, SiteID, Total_Beds, Occupied_Beds, Vacant_Beds</td></tr>
+      <tr><td><strong>Dim: Resident</strong></td><td><code>dbo.Resident</code></td><td>Surname, First_Name, Current_Room, Zone, Health_Status, Age, Gender, Active, Has_Care_Plan, On_Care_Package</td></tr>
+      <tr><td><strong>Dim: Room</strong></td><td><code>dbo.Room</code></td><td>Room, Zone, Type, Vacant?, Site()</td></tr>
+      <tr><td><strong>Dim: Date</strong></td><td>Power BI auto or custom</td><td>Date, DayOfWeek, WeekNumber</td></tr>
+    </tbody>
+  </table>
+</div>
 
-    <label><input type="checkbox" id="cross-march"> Cross-body marching with exhale – 2x20</label>
-    <div class="desc">Exhale as the knee lifts. Opposite arm/leg for timing control.</div>
+<!-- ───── SLICERS ───── -->
+<h2>Slicer Dimensions Available</h2>
+<div class="card">
+  <table>
+    <thead><tr><th>Slicer</th><th>Source Field</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-blue">Site</span></td><td><code>Site.Name_or_Title</code></td><td>Multi-site filtering</td></tr>
+      <tr><td><span class="badge badge-blue">Zone</span></td><td><code>Resident.Zone</code> or <code>Room.Zone</code></td><td>Zones within a site</td></tr>
+      <tr><td><span class="badge badge-blue">Room</span></td><td><code>Resident.Current_Room</code></td><td>Individual room</td></tr>
+      <tr><td><span class="badge badge-green">CareType</span></td><td>View's <code>CareType</code></td><td>ADL / Clinical / Woundcare</td></tr>
+      <tr><td><span class="badge badge-green">Frequency</span></td><td>View's <code>FrequencyDescription</code></td><td>Daily, weekly, etc.</td></tr>
+      <tr><td><span class="badge badge-amber">Health Status</span></td><td><code>Resident.Health_Status</code></td><td>Filter by acuity</td></tr>
+      <tr><td><span class="badge badge-amber">Active</span></td><td><code>Resident.Active</code></td><td>Exclude discharged/deceased</td></tr>
+      <tr><td><span class="badge badge-blue">Day of Week</span></td><td>View's <code>DayOfWeekName</code></td><td>Filter by specific day</td></tr>
+    </tbody>
+  </table>
+</div>
 
-    <label><input type="checkbox" id="bear-hold"> Bear crawl hover holds – 3x15–30 sec</label>
-    <div class="desc">Knees 1” off ground, hold with breath control and posture awareness.</div>
+<!-- ───── REPORT PAGES ───── -->
+<h2>Recommended Report Pages &amp; Visuals</h2>
 
-    <label><input type="checkbox" id="step-pause"> Step-pause-step walks – 2x10m</label>
-    <div class="desc">Pause between each step to train control and balance.</div>
+<div class="page-section">
+  <h3>Page 1: Weekly Schedule Overview</h3>
+  <div class="card">
+    <table>
+      <thead><tr><th>Visual</th><th>Purpose</th><th>Fields</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Matrix</strong></td><td>Weekly calendar grid</td><td>Rows: Resident, Cols: DayOfWeekName, Values: COUNT of care items</td></tr>
+        <tr><td><strong>Slicers</strong></td><td>Filter controls</td><td>Site, Zone, CareType, Day</td></tr>
+        <tr><td><strong>Card</strong></td><td>Total scheduled items this week</td><td>COUNT of rows</td></tr>
+        <tr><td><strong>Card</strong></td><td>Distinct residents with care</td><td>DISTINCTCOUNT Resident_id</td></tr>
+      </tbody>
+    </table>
   </div>
+</div>
 
-  <h3>🥋 BOXING PRACTICE (When Healthy)</h3>
-  <div id="boxing-checklist">
-    <label><input type="checkbox" id="shadowbox"> Shadowboxing (with posture + foot cues) – 3–5 rounds</label>
-    <div class="desc">Cues: heel-to-toe, big toe drive, weight shift, quiet landings.</div>
-
-    <label><input type="checkbox" id="ladder"> Ladder drills / cone steps – 5–10 mins</label>
-    <div class="desc">Quick, quiet steps. Prioritize balance over speed.</div>
-
-    <label><input type="checkbox" id="explosive"> Explosive rounds (20–30 sec + rest) – 4–6 sets</label>
-    <div class="desc">Short bursts at fight pace with full breath recovery.</div>
+<div class="page-section">
+  <h3>Page 2: Care Workload Analysis</h3>
+  <div class="card">
+    <table>
+      <thead><tr><th>Visual</th><th>Purpose</th><th>Fields</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Stacked bar</strong></td><td>Care items by time slot per site</td><td>X: ScheduledTime, Y: Count, Legend: Site</td></tr>
+        <tr><td><strong>Stacked bar</strong></td><td>Care items by CareType</td><td>X: CareType, Y: Count, Legend: FrequencyDescription</td></tr>
+        <tr><td><strong>Line chart</strong></td><td>Estimated care minutes per day</td><td>X: DayOfWeekName, Y: SUM(AverageTimeMinutes)</td></tr>
+        <tr><td><strong>Table</strong></td><td>Top residents by care load</td><td>Resident, Count of items, Total minutes</td></tr>
+      </tbody>
+    </table>
   </div>
+</div>
 
-  <h3>🧠 MINDSET / VISUALIZATION (Daily)</h3>
-  <div id="mindset-checklist">
-    <label><input type="checkbox" id="breath-reset"> Breathing reset – 3 minutes</label>
-    <div class="desc">Slow inhale, full exhale. Drain tension from ribs and gut.</div>
-
-    <label><input type="checkbox" id="visualize"> Visualize aligned movement / footwork – 5 min</label>
-    <div class="desc">Picture clean, explosive movement with sharp timing.</div>
-
-    <label><input type="checkbox" id="affirmation"> Affirmation</label>
-    <div class="desc">“I’m not here to be perfect — I’m here to express what I’ve rebuilt...”</div>
+<div class="page-section">
+  <h3>Page 3: Site &amp; Zone Drill-Down</h3>
+  <div class="card">
+    <table>
+      <thead><tr><th>Visual</th><th>Purpose</th><th>Fields</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Treemap</strong></td><td>Care distribution by Site → Zone → Room</td><td>Hierarchy drill</td></tr>
+        <tr><td><strong>Bar chart</strong></td><td>Residents per zone</td><td>X: Zone, Y: Count</td></tr>
+        <tr><td><strong>KPI cards</strong></td><td>Occupied beds vs care plan count per site</td><td>From Site table + view</td></tr>
+        <tr><td><strong>Table</strong></td><td>Residents without care plans</td><td>Filter: Has_Care_Plan = No</td></tr>
+      </tbody>
+    </table>
   </div>
+</div>
 
-  <script>
-    const checkboxIds = [
-      "wall-breath", "dead-bug", "toe-pulls", "split-squat", "march",
-      "toe-walks", "cross-march", "bear-hold", "step-pause",
-      "shadowbox", "ladder", "explosive",
-      "breath-reset", "visualize", "affirmation"
-    ];
+<div class="page-section">
+  <h3>Page 4: Resident Detail (drill-through)</h3>
+  <div class="card">
+    <table>
+      <thead><tr><th>Visual</th><th>Purpose</th><th>Fields</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Table</strong></td><td>Full weekly schedule for one resident</td><td>All view columns, filtered by Resident</td></tr>
+        <tr><td><strong>Cards</strong></td><td>Room, Zone, Health Status, Age</td><td>From Resident dimension</td></tr>
+        <tr><td><strong>Bar</strong></td><td>Care items by CareType</td><td>CareType, Count</td></tr>
+        <tr><td><strong>Timeline</strong></td><td>ScheduleDate → ScheduleEndDate</td><td>Gantt-style (custom visual)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-    function saveProgress() {
-      const state = {};
-      checkboxIds.forEach(id => {
-        state[id] = document.getElementById(id).checked;
-      });
-      localStorage.setItem("boxing-tracker", JSON.stringify(state));
-    }
+<!-- ───── FUTURE TABLES ───── -->
+<h2>Additional Tables Worth Adding Later</h2>
+<div class="card">
+  <table>
+    <thead><tr><th>Table</th><th>What It Adds</th></tr></thead>
+    <tbody>
+      <tr><td><code>dbo.Daily_Care</code></td><td>Actual care delivery (Bath, Meals, Bowels) — compare <strong>scheduled vs done</strong></td></tr>
+      <tr><td><code>dbo.Home_Care_(ADL)</code> / <code>Home_Care_(Clinic)_Done</code></td><td>Actual TBC items completed with Start_Time, End_Time, Time_Spent — real vs estimated duration</td></tr>
+      <tr><td><code>dbo.Progress_Note</code></td><td>Incidents, falls, vitals context</td></tr>
+      <tr><td><code>dbo.Vitals_Record</code></td><td>Health trends (BP, temp, weight) per resident</td></tr>
+      <tr><td><code>dbo.Incontinence_Care</code></td><td>Incontinence product usage tracking</td></tr>
+      <tr><td><code>dbo.Care</code> / <code>dbo.Clinical_Care</code></td><td>Hourly care logs with shift-based completion</td></tr>
+      <tr><td><code>dbo.Complaints/Concerns</code></td><td>Quality metrics — complaints by site/resident</td></tr>
+    </tbody>
+  </table>
 
-    function loadProgress() {
-      const saved = JSON.parse(localStorage.getItem("boxing-tracker") || "{}");
-      checkboxIds.forEach(id => {
-        const box = document.getElementById(id);
-        if (box && saved[id]) {
-          box.checked = true;
-        }
-        box.addEventListener("change", saveProgress);
-      });
-    }
-
-    function resetProgress() {
-      localStorage.removeItem("boxing-tracker");
-      checkboxIds.forEach(id => {
-        const box = document.getElementById(id);
-        if (box) box.checked = false;
-      });
-    }
-
-    window.onload = loadProgress;
-  </script>
+  <div class="tip">
+    The most impactful next step is bringing in <code>Daily_Care</code> or <code>Home_Care_(ADL)</code> to build a <strong>Scheduled vs Completed</strong> comparison — typically the #1 metric care managers want.
+  </div>
+</div>
 
 </body>
 </html>
